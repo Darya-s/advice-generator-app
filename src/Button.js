@@ -1,31 +1,20 @@
-import React, { useState } from "react";
+//import React, { useState } from "react";
 import "./index.css";
+import DICE from "./images/icon-dice.svg";
 
-import dice from "./images/icon-dice.svg";
 
-const Button = ({ handleClick }) => {
-	const [hover, setHover] = useState(false);
-
-	const handleMouseEnter = () => {
-		setHover(true);
-	};
-
-	const handleMouseLeave = () => {
-		setHover(false);
-	};
-
-	return (
-		<div>
-			<button
-				onClick={handleClick}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-				className={`${hover ? "on" : ""}`}
-			>
-				<img src={dice} alt="" />
-			</button>
-		</div>
-	);
+const Button = ({ throttleFetchData,isDisabled }) => {
+  return (
+    <div>
+    <button
+      className={isDisabled ? "rotate" : " "}
+      disabled={isDisabled}
+      onClick={throttleFetchData}
+    >
+      <img alt="dice" src={DICE} />
+    </button>
+  </div>
+  );
 };
 
 export default Button;
