@@ -1,52 +1,78 @@
 import React, { useState, useEffect } from "react";
-import "./index.css";
+
 import Button from "./Button";
+
 import Advice from "./Advice";
-import pauseMb from "./images/pattern-divider-mobile.svg";
-import pauseDt from "./images/pattern-divider-desktop.svg";
-const url = "https://api.adviceslip.com/advice";
+
+const URL = "https://api.adviceslip.com/advice";
 
 const AdvicesContainer = () => {
-	const [advices, setAdvices] = useState("");
-	const [loading, setLoading] = useState(true);
+  const [advices, setAdvices] = useState({});
 
-	const handleClick = async () => {
-		setLoading(true);
+  const [error, setError] = useState(null);
+  const [isDisabled, setDisabled] = useState(false);
 
-		const response = await fetch(url);
+  const getAdvice = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-		const result = await response.json();
+    try {
+      const response = await fetch(URL);
 
-		console.log("slip is: ", JSON.stringify(result.slip, null, 4));
+      if (!response.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${response.status}`
+        );
+      }
 
-		setAdvices(result.slip);
-	};
+      const result = await response.json();
 
-	useEffect(() => {
-		if (loading) {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	}, [loading]);
+      console.log("slip is: ", JSON.stringify(result.slip, null, 4));
+      setError(null);
 
-	useEffect(() => {
-		handleClick();
-	}, []);
+      setAdvices(result.slip);
 
-	return (
-		<div className="container">
-			{!loading ? <Advice advices={advices} /> : <p>Loading...</p>}
+      return result.slip;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+    }
+  };
 
-			<picture>
-				<source media="(max-width:499px)" srcSet={pauseMb} />
-				<source media="(min-width:500px)" srcSet={pauseDt} />
-				<img src={pauseDt} alt="" />
-			</picture>
+  let isThrottled = false;
+  let queuedFetch = null;
 
-			<Button handleClick={handleClick} />
-		</div>
-	);
+  async function throttleFetchData() {
+    if (!isThrottled) {
+      isThrottled = true;
+
+      setDisabled(true);
+      await getAdvice();
+      setDisabled(false);
+
+      isThrottled = false;
+      if (queuedFetch) {
+        const fetch = queuedFetch;
+        queuedFetch = null;
+        await throttleFetchData(fetch);
+      }
+    } else {
+      queuedFetch = getAdvice;
+    }
+  }
+
+  useEffect(() => {
+    getAdvice();
+  }, []);
+
+  return (
+    <div className="container">
+      {error && <p>{`There is a problem with fetching data - ${error}`}</p>}
+
+      <Advice advices={advices} />
+
+      <Button throttleFetchData={throttleFetchData} isDisabled={isDisabled} />
+    </div>
+  );
 };
 
 export default AdvicesContainer;
