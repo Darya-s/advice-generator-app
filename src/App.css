@@ -55,7 +55,7 @@ body {
   margin-top: 2em;
 }
 
-.container div > button {
+.container button {
   background-color: var(--neon-green);
   border-color: transparent;
   border-radius: 2.5rem;
