@@ -1,15 +1,9 @@
-
-import React from 'react';
-import AdvicesContainer from './AdvicesContainer';
-import './App.css'
+import React from "react";
+import AdvicesContainer from "./AdvicesContainer";
+import "./App.css";
 
 function App() {
-  return (
-    <div >
-      <AdvicesContainer/>
-       
-    </div>
-  );
+  return <AdvicesContainer />;
 }
 
 export default App;
