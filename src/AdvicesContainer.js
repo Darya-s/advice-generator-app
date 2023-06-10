@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-
 import Button from "./Button";
-
 import Advice from "./Advice";
 
 const URL = "https://api.adviceslip.com/advice";
@@ -13,56 +11,56 @@ const AdvicesContainer = () => {
   const [isDisabled, setDisabled] = useState(false);
 
   const getAdvice = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
+  
+    
     try {
+      setDisabled(true);
       const response = await fetch(URL);
+   
+      if (response) {
+       
+          
 
-      if (!response.ok) {
-        throw new Error(
-          `This is an HTTP error: The status is ${response.status}`
-        );
-      }
+        
+    
+          const result = await response.json();
 
-      const result = await response.json();
+          console.log("slip is: ", JSON.stringify(result.slip, null, 4));
+          setError(null);
 
-      console.log("slip is: ", JSON.stringify(result.slip, null, 4));
-      setError(null);
-
-      setAdvices(result.slip);
-
-      return result.slip;
+          setAdvices(result.slip);
+          setDisabled(false);
+          return result.slip;
+        }
+        else{
+            throw new Error(
+              `This is an HTTP error: The status is ${response.status}`
+            );
+        }
+      
     } catch (err) {
       setError(err.message);
     } finally {
     }
   };
 
-  let isThrottled = false;
-  let queuedFetch = null;
+  
 
-  async function throttleFetchData() {
-    if (!isThrottled) {
-      isThrottled = true;
+ const handleClick = (e) => {
+    console.log("Handle click function")
+    if (!isDisabled) {
 
-      setDisabled(true);
-      await getAdvice();
-      setDisabled(false);
-
-      isThrottled = false;
-      if (queuedFetch) {
-        const fetch = queuedFetch;
-        queuedFetch = null;
-        await throttleFetchData(fetch);
-      }
-    } else {
-      queuedFetch = getAdvice;
+     
+    
+      getAdvice();
     }
-  }
+  };
 
   useEffect(() => {
     getAdvice();
   }, []);
+
+
 
   return (
     <div className="container">
@@ -70,7 +68,7 @@ const AdvicesContainer = () => {
 
       <Advice advices={advices} />
 
-      <Button throttleFetchData={throttleFetchData} isDisabled={isDisabled} />
+      <Button onClick={handleClick} isDisabled={isDisabled} />
     </div>
   );
 };
