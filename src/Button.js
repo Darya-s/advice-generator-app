@@ -1,12 +1,12 @@
 import "./index.css";
 import DICE from "./images/icon-dice.svg";
 
-const Button = ({ throttleFetchData, isDisabled }) => {
+const Button = ({ onClick, isDisabled }) => {
   return (
     <button
       className={isDisabled ? "rotate" : " "}
       disabled={isDisabled}
-      onClick={throttleFetchData}
+      onClick={onClick}
     >
       <img alt="dice" src={DICE} />
     </button>
@@ -14,3 +14,4 @@ const Button = ({ throttleFetchData, isDisabled }) => {
 };
 
 export default Button;
+
