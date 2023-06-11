@@ -1,13 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
-import AdvicesContainer from './AdvicesContainer';
+import React from "react";
+import AdvicesContainer from "./AdvicesContainer";
+import "./App.css";
 
 function App() {
-  return (
-    <div >
-   
-    </div>
-  );
+  return <AdvicesContainer />;
 }
 
 export default App;
